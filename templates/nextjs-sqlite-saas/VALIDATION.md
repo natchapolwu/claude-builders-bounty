@@ -14,6 +14,35 @@ mkdir -p app/'(app)'/dashboard components/ui db/migrations db/queries lib/valida
 cp ../CLAUDE.md ./CLAUDE.md
 ```
 
+The repository also includes a dependency-free executable scaffold in
+[`example/`](example/) that follows the same conventions. It includes a numbered
+SQLite migration, a transaction-wrapped migration runner, query helpers outside
+React, a narrow Server Action shape, and a Server Component dashboard sketch.
+The validation script uses Node 24+'s built-in `node:sqlite` module so it can run
+without installing native packages; the template itself still targets Node 20+
+with `better-sqlite3` or Turso/libSQL.
+
+Run it with:
+
+```bash
+cd templates/nextjs-sqlite-saas/example
+npm run validate
+```
+
+Verified output:
+
+```text
+migrations applied: 0001_init.sql
+foreign_keys enabled: true
+timestamp format: 2026-07-01T10:19:54.350Z
+orphan workspace rejected: true
+ON DELETE CASCADE workspace_members: 1 -> 0
+validation: PASS
+```
+
+The timestamp value is generated at runtime; the important check is that it
+matches ISO 8601 UTC text as required by the template.
+
 ## Expected Claude Code Behavior
 
 After reading the template, Claude Code has enough context to proceed without
@@ -36,3 +65,6 @@ asking clarifying questions for these common tasks:
 - Anti-patterns with reasons: covered in `Anti-Patterns To Avoid`.
 - Usable without modification: the file intentionally uses project-relative
   folders and commands for a greenfield Next.js 15 + SQLite SaaS app.
+- Tested with executable scaffold: `example/scripts/validate-sqlite.mjs` applies
+  the real migration and asserts SQLite foreign keys, cascade behavior, and
+  default timestamp shape.
